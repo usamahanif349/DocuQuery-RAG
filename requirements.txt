@@ -1,0 +1,9 @@
+streamlit
+pymupdf
+faiss-cpu
+rank_bm25
+fastembed
+langchain
+langchain-community
+langchain-groq
+sentence-transformers
