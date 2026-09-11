@@ -1,7 +1,8 @@
 import os
 import tempfile
+import pymupdf4llm
+from langchain_core.documents import Document
 import streamlit as st
-from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.retrievers import BM25Retriever
@@ -89,11 +90,13 @@ with st.sidebar:
                         tmp_file.write(file.read())
                         tmp_path = tmp_file.name
 
-                    loader = PyMuPDFLoader(tmp_path, sort=True)
-                    docs = loader.load()
-                    for doc in docs:
-                        doc.metadata["source"] = file.name
-                    all_docs.extend(docs)
+                    page_data = pymupdf4llm.to_markdown(tmp_path, page_chunks=True)
+                    for page_info in page_data:
+                        doc = Document(
+                            page_content=page_info["text"],
+                            metadata={"source": file.name, "page": page_info["metadata"]["page"]}
+                        )
+                        all_docs.append(doc)
                     os.remove(tmp_path)
 
                 text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
