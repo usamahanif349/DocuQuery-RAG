@@ -66,7 +66,7 @@ with st.sidebar:
     groq_api_key = st.text_input("Groq API Key", type="password")
     model_name = st.selectbox("LLM Model", ["openai/gpt-oss-120b", "openai/gpt-oss-20b"])
 
-       st.divider()
+    st.divider()
     st.header("⚙️ RAG Parameters")
     chunk_size = st.slider("Chunk Size", 200, 2000, 1000, 100)
     chunk_overlap = st.slider("Chunk Overlap", 0, 500, 200, 50)
