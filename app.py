@@ -89,7 +89,7 @@ with st.sidebar:
                         tmp_file.write(file.read())
                         tmp_path = tmp_file.name
 
-                    loader = PyMuPDFLoader(tmp_path)
+                loader = PyMuPDFLoader(tmp_path, extract_kwargs={"sort": True})
                     docs = loader.load()
                     for doc in docs:
                         doc.metadata["source"] = file.name
