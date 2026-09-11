@@ -64,7 +64,7 @@ def get_reranked_docs(query, faiss_retriever, bm25_retriever, bm25_weight, final
 with st.sidebar:
     st.header("🔑 Configuration")
     groq_api_key = st.text_input("Groq API Key", type="password")
-    model_name = st.selectbox("LLM Model", ["llama-3.3-70b-versatile", "llama3-8b-8192"])
+    model_name = st.selectbox("LLM Model", ["openai/gpt-oss-120b", "openai/gpt-oss-20b"])
 
     st.divider()
     st.header("⚙️ RAG Parameters")
