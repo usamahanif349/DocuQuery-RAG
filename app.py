@@ -94,7 +94,7 @@ with st.sidebar:
                     for page_info in page_data:
                         doc = Document(
                             page_content=page_info["text"],
-                            metadata={"source": file.name, "page": page_info["metadata"]["page"]}
+                            metadata={"source": file.name, "page": page_info["metadata"]["page_number"] - 1}
                         )
                         all_docs.append(doc)
                     os.remove(tmp_path)
