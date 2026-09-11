@@ -81,7 +81,7 @@ with st.sidebar:
     if st.button("Process Documents", use_container_width=True):
         if not uploaded_files:
             st.error("Please upload at least one PDF.")
-        else:
+               else:
             with st.spinner("Parsing PDFs with PyMuPDF & indexing..."):
                 all_docs = []
                 for file in uploaded_files:
@@ -89,7 +89,7 @@ with st.sidebar:
                         tmp_file.write(file.read())
                         tmp_path = tmp_file.name
 
-                loader = PyMuPDFLoader(tmp_path, extract_kwargs={"sort": True})
+                    loader = PyMuPDFLoader(tmp_path, extract_kwargs={"sort": True})
                     docs = loader.load()
                     for doc in docs:
                         doc.metadata["source"] = file.name
