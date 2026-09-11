@@ -7,3 +7,4 @@ langchain
 langchain-community
 langchain-groq
 sentence-transformers
+pymupdf4llm
