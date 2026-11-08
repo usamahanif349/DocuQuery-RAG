@@ -66,6 +66,8 @@ def get_reranked_docs(query, faiss_retriever, bm25_retriever, bm25_weight, final
 def fix_math(text):
     text = re.sub(r"\\\[\s*(.+?)\s*\\\]", lambda m: "\n$$\n" + m.group(1) + "\n$$\n", text, flags=re.S)
     text = re.sub(r"\\\(\s*(.+?)\s*\\\)", lambda m: "$" + m.group(1) + "$", text, flags=re.S)
+    # Tables can't show <br> line breaks here, so turn them into spaces.
+    text = re.sub(r"\s*<br\s*/?>\s*", " ", text, flags=re.I)
     return text
 
 # 3. Sidebar Configuration
@@ -210,6 +212,7 @@ if prompt := st.chat_input("Ask a question about your documents..."):
     If the user's input is a casual greeting, pleasantry, or general conversational remark (e.g., "Hi", "Hello", "How are you?"), respond in a friendly, conversational manner and offer assistance with the uploaded documents.
     For all other questions, answer accurately using ONLY the context provided below, keeping chat history context in mind for follow-ups. If the context doesn't contain the answer, state that you don't know based on the provided documents.
     Write any maths in LaTeX using $...$ for inline formulas and $$...$$ for formulas on their own line.
+    Do not use HTML tags such as <br> in your answer.
 
     Chat History:
     {history}
