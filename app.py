@@ -72,13 +72,13 @@ with st.sidebar:
         groq_api_key = st.text_input("Groq API Key", type="password")
     model_name = st.selectbox("LLM Model", ["openai/gpt-oss-120b", "openai/gpt-oss-20b"])
 
-    st.divider()
-    st.header("⚙️ RAG Parameters")
-    chunk_size = st.slider("Chunk Size", 200, 2000, 1000, 100)
-    chunk_overlap = st.slider("Chunk Overlap", 0, 500, 200, 50)
-    final_k = st.slider("Final Context Chunks (k)", 1, 10, 4)
-    bm25_weight = st.slider("Keyword Priority (BM25)", 0.0, 1.0, 0.5, 0.1)
-    memory_depth = st.slider("Memory Depth (Turns)", 2, 20, 6, 2)
+    # Advanced settings are folded away so the upload box is easy to find.
+    with st.expander("⚙️ Advanced RAG settings"):
+        chunk_size = st.slider("Chunk Size", 200, 2000, 1000, 100)
+        chunk_overlap = st.slider("Chunk Overlap", 0, 500, 200, 50)
+        final_k = st.slider("Final Context Chunks (k)", 1, 10, 4)
+        bm25_weight = st.slider("Keyword Priority (BM25)", 0.0, 1.0, 0.5, 0.1)
+        memory_depth = st.slider("Memory Depth (Turns)", 2, 20, 6, 2)
 
     st.divider()
     st.header("📁 Document Ingestion")
@@ -136,6 +136,18 @@ with st.sidebar:
             mime="text/plain",
             use_container_width=True
         )
+
+# Getting-started guide, shown until the first documents are processed
+if st.session_state.faiss_retriever is None and not st.session_state.messages:
+    st.info(
+        "**How to use DocuQuery**\n\n"
+        "1. **Upload** one or more PDFs in the sidebar (📁 Document Ingestion).\n"
+        "2. Click **Process Documents** and wait a few seconds.\n"
+        "3. **Ask** a question in the box below. Each answer lists the file and page it came from "
+        "(open 📚 View Sources).\n\n"
+        "Tip: try a lecture PDF, a research paper or a policy document. "
+        "Please don't upload private or confidential files to this public demo."
+    )
 
 # 4. Display Existing Chat Messages
 for msg in st.session_state.messages:
