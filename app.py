@@ -64,7 +64,12 @@ def get_reranked_docs(query, faiss_retriever, bm25_retriever, bm25_weight, final
 # 3. Sidebar Configuration
 with st.sidebar:
     st.header("🔑 Configuration")
-    groq_api_key = st.text_input("Groq API Key", type="password")
+    # On Hugging Face the key is stored as a Space secret, so visitors don't need one.
+    groq_api_key = os.environ.get("GROQ_API_KEY", "")
+    if groq_api_key:
+        st.success("Demo key active: just upload PDFs and ask.")
+    else:
+        groq_api_key = st.text_input("Groq API Key", type="password")
     model_name = st.selectbox("LLM Model", ["openai/gpt-oss-120b", "openai/gpt-oss-20b"])
 
     st.divider()
