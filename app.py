@@ -1,4 +1,5 @@
 import os
+import re
 import tempfile
 import pymupdf4llm
 from langchain_core.documents import Document
@@ -60,6 +61,12 @@ def get_reranked_docs(query, faiss_retriever, bm25_retriever, bm25_weight, final
 
     reranked_docs = [doc for doc, score in scored_docs[:final_k]]
     return reranked_docs
+
+# Streamlit renders maths written as $...$ and $$...$$, but LLMs often write \( \) and \[ \] instead.
+def fix_math(text):
+    text = re.sub(r"\\\[\s*(.+?)\s*\\\]", lambda m: "\n$$\n" + m.group(1) + "\n$$\n", text, flags=re.S)
+    text = re.sub(r"\\\(\s*(.+?)\s*\\\)", lambda m: "$" + m.group(1) + "$", text, flags=re.S)
+    return text
 
 # 3. Sidebar Configuration
 with st.sidebar:
@@ -152,7 +159,7 @@ if st.session_state.faiss_retriever is None and not st.session_state.messages:
 # 4. Display Existing Chat Messages
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
-        st.write(msg["content"])
+        st.markdown(fix_math(msg["content"]))
         if "sources" in msg and msg["sources"]:
             with st.expander("📚 View Sources"):
                 for idx, src in enumerate(msg["sources"], 1):
@@ -202,6 +209,7 @@ if prompt := st.chat_input("Ask a question about your documents..."):
     You are an expert document assistant. 
     If the user's input is a casual greeting, pleasantry, or general conversational remark (e.g., "Hi", "Hello", "How are you?"), respond in a friendly, conversational manner and offer assistance with the uploaded documents.
     For all other questions, answer accurately using ONLY the context provided below, keeping chat history context in mind for follow-ups. If the context doesn't contain the answer, state that you don't know based on the provided documents.
+    Write any maths in LaTeX using $...$ for inline formulas and $$...$$ for formulas on their own line.
 
     Chat History:
     {history}
@@ -222,9 +230,9 @@ if prompt := st.chat_input("Ask a question about your documents..."):
 
         for chunk in chain.stream({"history": history_text, "context": context_text, "question": prompt}):
             full_response += chunk
-            response_placeholder.markdown(full_response + "▌")
+            response_placeholder.markdown(fix_math(full_response) + "▌")
 
-        response_placeholder.markdown(full_response)
+        response_placeholder.markdown(fix_math(full_response))
 
         # Only show sources container if sources actually exist and weren't just a greeting response
         if len(prompt.split()) > 3 or "hello" not in prompt.lower():
